@@ -16,13 +16,16 @@
              'views/exam_view.xml',
              'views/exam_sequence.xml',
              'views/exam_result_report.xml',
+             'views/exam_result_report_card.xml',
              'views/additional_exam_report.xml',
              'views/result_information_report.xml',
              'views/batch_exam.xml',
              'views/report_view.xml',
              'wizard/subject_result.xml',
              'wizard/batch_result.xml'],
-    'demo': ['demo/exam_demo.xml'],
+    'demo': [
+        'demo/exam_demo.xml'
+    ],
     'installable': True,
     'application': True,
 }

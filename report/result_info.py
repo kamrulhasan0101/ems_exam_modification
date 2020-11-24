@@ -68,6 +68,7 @@ class ReportResultInfo(models.AbstractModel):
                     'doc_model': student_model.model,
                     'data': data,
                     'docs': docs,
+                    'additional_result': add_result,
                     'get_lines': self.get_lines,
                     'get_exam_data': self.get_exam_data,
                     }

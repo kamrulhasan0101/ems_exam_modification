@@ -3,9 +3,9 @@
 <odoo>
 
     <report menu="False"
-            id="add_exam_result_id_qweb" 
+            id="add_exam_result_id_qweb"
             string="Exam Result"
-            model="exam.result" 
+            model="exam.result"
             report_type="qweb-pdf"
             file="exam.exam_result_report"
             name="exam.exam_result_report"/>
@@ -32,4 +32,11 @@
             file="exam_result_batch"
             name="exam.exam_result_batch"/>
 
+    <report id="reportcard_pdf"
+            model="exam.result"
+            string="DIS Report Card"
+            report_type="qweb-html"
+            name="exam.exam_result_report_card"
+            file="exam.exam_result_report_card"
+            print_report_name="'Exam Result Report Card'"/>
 </odoo>

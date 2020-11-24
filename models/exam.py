@@ -16,9 +16,9 @@ class StudentStudent(models.Model):
         '''Override method to make exam results of student active false
         when student is alumni'''
         for rec in self:
-            addexam_result = self.env['additional.exam.result'].\
+            addexam_result = self.env['additional.exam.result']. \
                 search([('student_id', '=', rec.id)])
-            regular_examresult = self.env['exam.result'].\
+            regular_examresult = self.env['exam.result']. \
                 search([('student_id', '=', rec.id)])
             if addexam_result:
                 addexam_result.write({'active': False})
@@ -84,8 +84,8 @@ class ExtendedTimeTable(models.Model):
                     raise ValidationError(_('''You cannot set exam at same
                                             time %s  at same day %s for
                                             teacher %s!''') %
-                                           (rec.start_time, rec.day_of_week,
-                                            rec.teacher_id.name))
+                                          (rec.start_time, rec.day_of_week,
+                                           rec.teacher_id.name))
 
 
 class ExtendedTimeTableLine(models.Model):
@@ -122,7 +122,7 @@ for the date or you have selected invalid date!'''))
         for rec in self:
             if (rec.table_id.timetable_type == 'exam' and
                     not rec.teacher_id):
-                    raise ValidationError(_('''PLease Enter Supervisior!'''))
+                raise ValidationError(_('''PLease Enter Supervisior!'''))
 
     @api.constrains('start_time', 'end_time')
     def check_time(self):
@@ -141,10 +141,10 @@ time!'''))
             for data in timetable_rec:
                 for record in data.timetable_ids:
                     if (data.timetable_type == 'exam' and
-                            self.table_id.timetable_type == 'exam' and
-                            self.class_room_id == record.class_room_id and
-                            self.start_time == record.start_time):
-                            raise ValidationError(_("The room is occupied!"))
+                                self.table_id.timetable_type == 'exam' and
+                                self.class_room_id == record.class_room_id and
+                                self.start_time == record.start_time):
+                        raise ValidationError(_("The room is occupied!"))
 
     @api.constrains('subject_id', 'class_room_id')
     def check_exam_date(self):
@@ -153,20 +153,20 @@ time!'''))
             record = self.table_id
             if rec.id not in self.ids:
                 if (record.timetable_type == 'exam' and
-                        self.exm_date == rec.exm_date and
-                        self.start_time == rec.start_time):
+                            self.exm_date == rec.exm_date and
+                            self.start_time == rec.start_time):
                     raise ValidationError(_('''There is already Exam at
                         same Date and Time!'''))
                 if (record.timetable_type == 'exam' and
-                        self.table_id.timetable_type == 'exam' and
-                        self.subject_id == rec.subject_id):
-                        raise ValidationError(_('''%s Subject Exam Already
+                            self.table_id.timetable_type == 'exam' and
+                            self.subject_id == rec.subject_id):
+                    raise ValidationError(_('''%s Subject Exam Already
                         Taken''') % (self.subject_id.name))
                 if (record.timetable_type == 'exam' and
-                        self.table_id.timetable_type == 'exam' and
-                        self.exm_date == rec.exm_date and
-                        self.class_room_id == rec.class_room_id and
-                        self.start_time == rec.start_time):
+                            self.table_id.timetable_type == 'exam' and
+                            self.exm_date == rec.exm_date and
+                            self.class_room_id == rec.class_room_id and
+                            self.start_time == rec.start_time):
                     raise ValidationError(_('''%s is occupied by '%s' for %s
                     class!''') % (self.class_room_id.name, record.name,
                                   record.standard_id.standard_id.name))
@@ -413,8 +413,8 @@ class ExamResult(models.Model):
                 per = (obtained_total / total) * 100
                 if result.grade_system:
                     for grade_id in result.grade_system.grade_ids:
-                        if per >= grade_id.from_mark and\
-                                per <= grade_id.to_mark:
+                        if per >= grade_id.from_mark and \
+                                        per <= grade_id.to_mark:
                             result.grade = grade_id.grade or ''
             result.percentage = per
 
@@ -426,11 +426,29 @@ class ExamResult(models.Model):
             if rec.result_ids:
                 for grade in rec.result_ids:
                     if not grade.grade_line_id.fail:
-                            rec.result = 'Pass'
+                        rec.result = 'Pass'
                     else:
                         flag = True
             if flag:
                 rec.result = 'Fail'
+
+    @api.depends('result_ids', 'grade_system')
+    def _compute_gpa(self):
+        '''Method to compute gpa'''
+        for rec in self:
+            if rec.result_ids:
+                nos = len(rec.result_ids)
+                total_points = 0
+                for r in rec.result_ids:
+                    grade = r.grade_line_id.grade
+                    for g in rec.grade_system.grade_ids:
+                        if grade == g.grade:
+                            total_points += g.grade_point
+                if total_points > 0:
+                    gpa = total_points / nos
+                    rec.gpa = round(gpa, 2)
+                else:
+                    rec.gpa = 0
 
     @api.model
     def create(self, vals):
@@ -511,6 +529,8 @@ class ExamResult(models.Model):
                                                                  '=',
                                                                  self._name
                                                                  )])
+    remarks = fields.Text(string='Remarks', required=False)
+    gpa = fields.Float(string="GPA", compute='_compute_gpa')
 
     def result_confirm(self):
         '''Method to confirm result'''
@@ -524,7 +544,7 @@ class ExamResult(models.Model):
                     raise ValidationError(_('Kindly add minimum\
                         marks of subject "%s".') % (line.subject_id.name))
                 elif ((line.maximum_marks == 0 or line.minimum_marks == 0) and
-                      line.obtain_marks):
+                          line.obtain_marks):
                     raise ValidationError(_('Kindly add marks\
                         details of subject "%s"!') % (line.subject_id.name))
             vals = {'grade': rec.grade,
@@ -586,19 +606,91 @@ class ExamSubject(models.Model):
     _description = 'Exam Subject Information'
     _rec_name = 'subject_id'
 
-    @api.constrains('obtain_marks', 'minimum_marks', 'maximum_marks',
+    @api.constrains('subject_id', 'cq_marks', 'mcq_marks', 'practical_marks', 'obtain_marks', 'minimum_marks', 'maximum_marks',
                     'marks_reeval')
     def _validate_marks(self):
         '''Method to validate marks'''
+        maximum_marks = self.maximum_marks if self.maximum_marks else self.subject_id.maximum_marks
+        mcq_maximum_marks = self.subject_id.mcq_maximum_marks
+        cq_maximum_marks = self.subject_id.cq_maximum_marks
+        practical_maximum_marks = self.subject_id.practical_maximum_marks
+
+        mcq_marks = self.mcq_marks
+        cq_marks = self.cq_marks
+        practical_marks = self.practical_marks
+
+        if mcq_marks > mcq_maximum_marks:
+            raise ValidationError(_('''The mcq marks
+                        should not exceed mcq maximum marks!
+                        N.B: The maximum marks of mcq is %d''' %(mcq_maximum_marks)))
+        if cq_marks > cq_maximum_marks:
+            raise ValidationError(_('''The cq marks
+                        should not exceed cq maximum marks!
+                        N.B: The maximum marks of cq is %d''' %(cq_maximum_marks)))
+        if practical_marks > practical_maximum_marks:
+            raise ValidationError(_('''The practical marks
+                        should not exceed practical maximum marks!
+                        N.B: The maximum marks of practical is %d''' %(practical_maximum_marks)))
+
         if self.obtain_marks > self.maximum_marks:
             raise ValidationError(_('''The obtained marks
-            should not extend maximum marks!'''))
-        if self.minimum_marks > self.maximum_marks:
-            raise ValidationError(_('''The minimum marks
-            should not extend maximum marks!'''))
-        if(self.marks_reeval > self.maximum_marks):
+            should not exceed maximum marks!'''))
+        # if self.minimum_marks > self.maximum_marks:
+        #     raise ValidationError(_('''The minimum marks
+        #     should not extend maximum marks!'''))
+        if (self.marks_reeval > self.maximum_marks):
             raise ValidationError(_('''The revaluation marks
-            should not extend maximum marks!'''))
+            should not exceed maximum marks!'''))
+
+    @api.depends('subject_id')
+    def _compute_maximum_marks(self):
+        '''Method to compute con total exam marks'''
+        for rec in self:
+            rec.maximum_marks = rec.subject_id.maximum_marks
+
+    @api.depends('subject_id')
+    def _compute_minimum_marks(self):
+        '''Method to compute con total exam marks'''
+        for rec in self:
+            rec.minimum_marks = rec.subject_id.minimum_marks
+
+    @api.depends('mcq_marks', 'cq_marks', 'practical_marks')
+    def _compute_total_exam_marks(self):
+        '''Method to compute total exam marks'''
+        for rec in self:
+            total_exam_marks = 0.0
+            if rec.mcq_marks:
+                total_exam_marks += rec.mcq_marks
+            if rec.cq_marks:
+                total_exam_marks += rec.cq_marks
+            if rec.practical_marks:
+                total_exam_marks += rec.practical_marks
+            rec.total_exam_marks = total_exam_marks
+
+    @api.depends('total_exam_marks')
+    def _compute_con_total_exam_marks(self):
+        '''Method to compute con total exam marks'''
+        for rec in self:
+            rec.con_total_marks = rec.total_exam_marks * .8 if rec.total_exam_marks > 0 else 0
+
+    @api.depends('sba_marks', 'ct_marks', 'con_total_marks')
+    def _compute_obtain_marks(self):
+        '''Method to compute obtain marks'''
+        for rec in self:
+            additional_marks = rec.sba_marks + rec.ct_marks
+            rec.obtain_marks = round(rec.con_total_marks + additional_marks)
+
+    @api.depends('exam_id', 'subject_id')
+    def _compute_highest_marks(self):
+        for rec in self:
+            marks = []
+            exam_id = rec.exam_id.id
+            subject_id = rec.subject_id.id
+            obj = rec.search([('exam_id', '=', exam_id), ('subject_id', '=', subject_id)])
+            for o in obj:
+               marks.append(o.obtain_marks)
+            rec.highest_marks = max(marks) if len(marks) > 0 else 0
+
 
     @api.depends('exam_id', 'obtain_marks', 'marks_reeval')
     def _compute_grade(self):
@@ -623,16 +715,24 @@ class ExamSubject(models.Model):
                                'Re-Evaluation Confirm')],
                              related='exam_id.state', string="State")
     subject_id = fields.Many2one("subject.subject", "Subject Name")
-    obtain_marks = fields.Float("Obtain Marks", group_operator="avg")
+    obtain_marks = fields.Float("Obtain Marks", compute='_compute_obtain_marks', store=True)
     minimum_marks = fields.Float("Minimum Marks",
-                                 help="Minimum Marks of subject")
+                                 help="Minimum Marks of subject", compute='_compute_minimum_marks')
     maximum_marks = fields.Float("Maximum Marks",
-                                 help="Maximum Marks of subject")
+                                 help="Maximum Marks of subject", compute='_compute_maximum_marks')
+    cq_marks = fields.Float("CQ Marks")
+    mcq_marks = fields.Float("MCQ Marks")
+    practical_marks = fields.Float("Practical Marks")
+    total_exam_marks = fields.Float("Total", compute='_compute_total_exam_marks', store=True)
+    con_total_marks = fields.Float("Con. Total", compute='_compute_con_total_exam_marks', store=True)
+    # total_obtain_marks = fields.Float("Total Marks", group_operator="avg")
+    sba_marks = fields.Float("S.B.A")
+    ct_marks = fields.Float("CT")
     marks_reeval = fields.Float("Marks After Re-evaluation",
                                 help="Marks Obtain after Re-evaluation")
+    highest_marks = fields.Float("Highest Marks", compute='_compute_highest_marks')
     grade_line_id = fields.Many2one('grade.line', "Grade",
                                     compute='_compute_grade')
-
 
 class AdditionalExamResult(models.Model):
     """Defining model for Additional Exam Result."""

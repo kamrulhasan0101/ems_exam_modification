@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <template id="exam_result_report_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <!--height:842px; width:595px; -->
+                            <div class="bg-white p-4">
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <img src="dis-logo.png" alt=""/>
+                                    </div>
+                                    <div class="col-8 text-center">
+                                        <h2>Daffodil International School</h2>
+                                        <h3>English Version - Dhanmondi</h3>
+                                        <h6>House#09, Road#14, Dhanmondi, Dhaka-1209</h6>
+                                        <h6>Web: dis.edu.bd
+                                            <span>Email: info@dis.edu.bd</span>
+                                        </h6>
+                                    </div>
+                                    <div class="col-2"></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12 text-center">
+                                        <h4>Report Card</h4>
+                                        <h4 t-field="o.s_exam_ids.name"/>
+                                    </div>
+                                </div>
+                                <div class="row d-flex mb-2">
+                                    <div class="col-7 justify-content-center align-self-center">
+                                        <table class="table table-bordered student-info-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Student ID</strong>
+                                                    </td>
+                                                    <td style="border-right: none;">
+                                                        <span t-field="o.student_id.student_code"/>
+                                                    </td>
+                                                    <td style="border-left: none;">
+                                                        <strong>Class Roll</strong>
+                                                    </td>
+                                                    <td>
+                                                        <span t-field="o.student_id.roll_no"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Student Name</strong>
+                                                    </td>
+                                                    <td colspan="3">
+                                                        <span t-field="o.student_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Branch</strong>
+                                                    </td>
+                                                    <td><span t-field="o.student_id.school_id"/></td>
+                                                    <td>
+                                                        <strong>Class</strong>
+                                                    </td>
+                                                    <td>
+                                                        <span t-field="o.standard_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Section</strong>
+                                                    </td>
+                                                    <td></td>
+                                                    <td>
+                                                        <strong>Version</strong>
+                                                    </td>
+                                                    <td><span t-field="o.student_id.medium_id"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Session</strong>
+                                                    </td>
+                                                    <td><span t-field="o.student_id.year"/></td>
+                                                    <td>
+                                                        <strong>Group</strong>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-5">
+                                        <table class="table table-bordered text-center">
+                                            <thead class="bg-info">
+                                                <tr>
+                                                    <th>Letter Grade</th>
+                                                    <th>Marks Interval</th>
+                                                    <th>Grade Point</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="o.grade_system.grade_ids" t-as="g">
+                                                    <tr>
+                                                        <td><span t-field="g.grade"/></td>
+                                                        <td><span t-esc="'%d-%d'%(g.from_mark, g.to_mark)"/></td>
+                                                        <td><span t-field="g.grade_point"/></td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table class="table table-bordered mb-1 border-left-0 border-right-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="align-middle" rowspan="2">Srl.</th>
+                                                    <th class="align-middle" rowspan="2">Subjects</th>
+                                                    <th class="align-middle" rowspan="2">Full Marks</th>
+                                                    <th class="align-middle" rowspan="2">S.B.A</th>
+                                                    <th class="align-middle" rowspan="2">CT</th>
+                                                    <th class="align-middle" colspan="5"></th>
+                                                    <th class="align-middle" rowspan="2">Total Marks</th>
+                                                    <th class="align-middle" rowspan="2">Highest Marks</th>
+                                                    <th class="align-middle" rowspan="2">Letter Grade</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="align-middle">MCQ</th>
+                                                    <th class="align-middle">CQ</th>
+                                                    <th class="align-middle">PR</th>
+                                                    <th class="align-middle">Total</th>
+                                                    <th class="align-middle">Con.T</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="border-left-0 border-right-0">
+                                                <t t-set="sl_no" t-value="0"/>
+                                                <t t-foreach="o.result_ids" t-as="s">
+                                                    <t t-set="sl_no" t-value="sl_no+1"/>
+                                                    <tr>
+                                                        <td><span t-esc="sl_no"/></td>
+                                                        <td>
+                                                            <span t-field="s.subject_id"/>
+                                                        </td>
+                                                        <td>
+                                                            <span t-field="s.maximum_marks"/>
+                                                        </td>
+                                                        <td><span t-field="s.sba_marks"/></td>
+                                                        <td><span t-field="s.ct_marks"/></td>
+                                                        <td><span t-field="s.mcq_marks"/></td>
+                                                        <td><span t-field="s.cq_marks"/></td>
+                                                        <td><span t-field="s.practical_marks"/></td>
+                                                        <td><span t-field="s.total_exam_marks"/></td>
+                                                        <td><span t-field="s.con_total_marks"/></td>
+                                                        <td><span t-field="s.obtain_marks"/></td>
+                                                        <td><span t-field="s.highest_marks"/></td>
+                                                        <td><span t-field="s.grade_line_id"/></td>
+                                                    </tr>
+                                                </t>
+                                                <tr>
+                                                    <td colspan="10">
+                                                        <strong>Total Marks and Total GP</strong>
+                                                    </td>
+                                                    <td>
+                                                        <strong><span t-field="o.total"/></strong>
+                                                    </td>
+                                                    <td colspan="2"></td>
+                                                </tr>
+                                                <tr class="border-left-0 border-right-0">
+                                                    <td class="border-left-0 border-right-0 py-2" colspan="13"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>13</td>
+                                                    <td>Career Education</td>
+                                                    <td>100.00</td>
+                                                    <td>5</td>
+                                                    <td>8.00</td>
+                                                    <td></td>
+                                                    <td>88.00</td>
+                                                    <td></td>
+                                                    <td>88.00</td>
+                                                    <td>70.40</td>
+                                                    <td>83.00</td>
+                                                    <td>88.00</td>
+                                                    <td>A</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>14</td>
+                                                    <td>Physical and Health Education</td>
+                                                    <td>100.00</td>
+                                                    <td>5</td>
+                                                    <td>8.00</td>
+                                                    <td></td>
+                                                    <td>88.00</td>
+                                                    <td></td>
+                                                    <td>88.00</td>
+                                                    <td>70.40</td>
+                                                    <td>83.00</td>
+                                                    <td>88.00</td>
+                                                    <td>A</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table class="table table-bordered mb-1">
+                                            <thead>
+                                                <tr>
+                                                    <th>Grade Point Average</th>
+                                                    <th><span t-field="o.gpa"/></th>
+                                                    <th colspan="2" class="text-center">Attendance</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Letter Grade</td>
+                                                    <td><span t-field="o.grade"/></td>
+                                                    <td>Working Days</td>
+                                                    <td>0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Marks with Fraction</td>
+                                                    <td><span t-field="o.total"/></td>
+                                                    <td>Present</td>
+                                                    <td>0</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="border border-dark rounded mb-1">
+                                            <table class="table borderless mb-1" style="border-top: none;">
+                                                <tr>
+                                                    <td style="border-right: none;">
+                                                        <strong>Remarks:</strong>
+                                                    </td>
+                                                    <td style="border-left: none;">
+                                                        <span t-field="o.remarks"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table class="table table-bordered mb-1">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2">Class Teachers Name: Kazi Md. Karim Hossain</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input"/>
+                                                            <span>Promoted to Grade</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input"/>
+                                                            <span>To Repeat</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td rowspan="2" class="align-middle">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>Vice Principal's Signature:</span>
+                                                            </div>
+                                                            <div class="col">
+                                                                <img src="" alt=""/>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>Founder Principal's Signature:</span>
+                                                            </div>
+                                                            <div class="col">
+                                                                <img src="" alt=""/>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="align-middle">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>Principal's Signature:</span>
+                                                            </div>
+                                                            <div class="col">
+                                                                <img src="" alt=""/>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="align-middle">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <strong>Parent's Signature:</strong>
+                                                            </div>
+                                                            <div class="col">
+                                                                <img src="" alt=""/>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <strong>Next Term Begins on:</strong>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

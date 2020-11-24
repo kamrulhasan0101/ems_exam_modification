@@ -17,9 +17,10 @@
                     </form>
                 </field>
                 <footer>
-                    <button class="btn btn-sm btn-default fa fa-book" name='result_report' type='object' string='Result'/>
+                    <button class="btn btn-sm btn-default fa fa-book" name='result_report' type='object'
+                            string='Result'/>
                 </footer>
-           </form>
+            </form>
         </field>
     </record>
 
@@ -33,11 +34,29 @@
 
     <!-- Act Window For Action Of Subject Result-->
     <act_window id="action_subject_result_wiz"
-        name="Subject Result"
-        res_model="subject.result.wiz" 
-        binding_model="exam.result"
-        view_mode="form" 
-        target="new" 
-        binding_views="form,list"
-        groups="school.group_school_administration"/>
+                name="Subject Result"
+                res_model="subject.result.wiz"
+                binding_model="exam.result"
+                view_mode="form"
+                target="new"
+                binding_views="form,list"
+                groups="school.group_school_administration"/>
+
+    <!-- Action Of Form View Of Subject Result-->
+    <record id="action_exam_result_report_wiz" model="ir.actions.act_window">
+        <field name="name">Report</field>
+        <field name="res_model">subject.result.wiz</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Act Window For Action Of Subject Result-->
+    <act_window id="action_exam_result_report_wiz"
+                name="Report"
+                res_model="subject.result.wiz"
+                binding_model="exam.result"
+                view_mode="form"
+                target="new"
+                binding_views="form,list"
+                groups="school.group_school_administration"/>
 </odoo>
